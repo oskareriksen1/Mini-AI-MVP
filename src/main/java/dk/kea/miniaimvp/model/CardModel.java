@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.util.List;
 
 @Getter
 @Setter
@@ -22,12 +23,24 @@ public class CardModel {
     private String names;
     private String manaCost;
     private double cmc;
-    private String colors;
-    private String colorIdentity;
+
+    @ElementCollection
+    private List<String> colors; // Ændret til liste
+
+    @ElementCollection
+    private List<String> colorIdentity; // Ændret til liste
+
     private String type;
-    private String supertypes;
-    private String types;
-    private String subtypes;
+
+    @ElementCollection
+    private List<String> supertypes; // Ændret til liste
+
+    @ElementCollection
+    private List<String> types; // Ændret til liste
+
+    @ElementCollection
+    private List<String> subtypes; // Ændret til liste
+
     private String rarity;
     private String text;
     private String originalText;
@@ -48,8 +61,14 @@ public class CardModel {
     private boolean reserved;
     private String releaseDate;
     private boolean starter;
+
+    @Column(name = "card_set") // Brug et andet navn i databasen
     private String set;
+
     private String setName;
-    private String printings;
+
+    @ElementCollection
+    private List<String> printings; // Ændret til liste
+
     private String imageUrl;
 }

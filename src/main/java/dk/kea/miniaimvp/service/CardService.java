@@ -1,12 +1,13 @@
 package dk.kea.miniaimvp.service;
-
 import dk.kea.miniaimvp.model.CardModel;
 import dk.kea.miniaimvp.repository.CardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class CardService {
@@ -24,20 +25,27 @@ public class CardService {
 
         for (Map<String, Object> cardData : cards) {
             String cardName = (String) cardData.get("name");
-            if (!cardRepository.existsByName(cardName)) { // Assuming there's a unique name constraint
+            if (!cardRepository.existsByName(cardName)) {
 
                 CardModel card = new CardModel();
                 card.setLayout((String) cardData.get("layout"));
                 card.setName(cardName);
-                card.setNames((String) cardData.get("names"));
+
+                // Konverter "names" fra liste til streng, hvis nødvendigt
+                card.setNames(convertListToString(cardData.get("names")));
+
                 card.setManaCost((String) cardData.get("manaCost"));
                 card.setCmc(cardData.get("cmc") != null ? ((Number) cardData.get("cmc")).doubleValue() : 0.0);
-                card.setColors((String) cardData.get("colors"));
-                card.setColorIdentity((String) cardData.get("colorIdentity"));
+
+                // Cast korrekt til List<String>
+                card.setColors((List<String>) cardData.get("colors"));
+                card.setColorIdentity((List<String>) cardData.get("colorIdentity"));
+                card.setSupertypes((List<String>) cardData.get("supertypes"));
+                card.setTypes((List<String>) cardData.get("types"));
+                card.setSubtypes((List<String>) cardData.get("subtypes"));
+                card.setPrintings((List<String>) cardData.get("printings"));
+
                 card.setType((String) cardData.get("type"));
-                card.setSupertypes((String) cardData.get("supertypes"));
-                card.setTypes((String) cardData.get("types"));
-                card.setSubtypes((String) cardData.get("subtypes"));
                 card.setRarity((String) cardData.get("rarity"));
                 card.setText((String) cardData.get("text"));
                 card.setOriginalText((String) cardData.get("originalText"));
@@ -47,24 +55,52 @@ public class CardService {
                 card.setPower((String) cardData.get("power"));
                 card.setToughness((String) cardData.get("toughness"));
                 card.setLoyalty((String) cardData.get("loyalty"));
-                card.setMultiverseid(cardData.get("multiverseid") != null ? (int) cardData.get("multiverseid") : -1);
-                card.setVariations((String) cardData.get("variations"));
+
+                // Brug convertToInt til at undgå typefejl
+                card.setMultiverseid(convertToInt(cardData.get("multiverseid")));
+                card.setHand(convertToInt(cardData.get("hand")));
+                card.setLife(convertToInt(cardData.get("life")));
+
+                // Konverter "variations" fra liste til streng, hvis nødvendigt
+                card.setVariations(convertListToString(cardData.get("variations")));
+
                 card.setImageName((String) cardData.get("imageName"));
                 card.setWatermark((String) cardData.get("watermark"));
                 card.setBorder((String) cardData.get("border"));
                 card.setTimeshifted(cardData.get("timeshifted") != null && (boolean) cardData.get("timeshifted"));
-                card.setHand(cardData.get("hand") != null ? (int) cardData.get("hand") : 0);
-                card.setLife(cardData.get("life") != null ? (int) cardData.get("life") : 0);
                 card.setReserved(cardData.get("reserved") != null && (boolean) cardData.get("reserved"));
                 card.setReleaseDate((String) cardData.get("releaseDate"));
                 card.setStarter(cardData.get("starter") != null && (boolean) cardData.get("starter"));
                 card.setSet((String) cardData.get("set"));
                 card.setSetName((String) cardData.get("setName"));
-                card.setPrintings((String) cardData.get("printings"));
                 card.setImageUrl((String) cardData.get("imageUrl"));
 
                 cardRepository.save(card);
             }
         }
+    }
+
+    private int convertToInt(Object value) {
+        if (value instanceof Integer) {
+            return (Integer) value;
+        } else if (value instanceof String) {
+            try {
+                return Integer.parseInt((String) value);
+            } catch (NumberFormatException e) {
+                return -1; // Eller en anden standardværdi
+            }
+        }
+        return -1; // Standardværdi, hvis typen ikke kan håndteres
+    }
+
+    private String convertListToString(Object value) {
+        if (value instanceof List) {
+            return ((List<?>) value).stream()
+                    .map(Object::toString)
+                    .collect(Collectors.joining(", "));
+        } else if (value instanceof String) {
+            return (String) value;
+        }
+        return null; // Eller en standardværdi, hvis ingen af delene
     }
 }
