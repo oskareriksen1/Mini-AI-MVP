@@ -1,14 +1,27 @@
 package dk.kea.miniaimvp.config;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
+import dk.kea.miniaimvp.repository.CardRepository;
+import dk.kea.miniaimvp.service.CardService;
 
-@Configuration
-public class CardInitData {
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
+@Component
+@Order(3)
+public class CardInitData implements CommandLineRunner {
+
+    private final CardRepository cardRepository;
+    private final CardService cardService;
+
+    public CardInitData(CardRepository cardRepository, CardService cardService) {
+        this.cardRepository = cardRepository;
+        this.cardService = cardService;
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        if (cardRepository.findAll().isEmpty()) {
+            cardService.fetchAndSaveCards();
+        }
     }
 }
-
