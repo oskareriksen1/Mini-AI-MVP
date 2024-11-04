@@ -1,0 +1,26 @@
+#filters {
+    margin-bottom: 20px;
+}
+
+#filters label {
+    margin-right: 10px;
+}
+
+#filters select, #filters input {
+    margin-right: 20px;
+}
+
+#cards-container .card {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.card h3 {
+    margin: 0;
+    font-size: 1.2em;
+}
+
+.card p {
+    margin: 5px 0;
+}
