@@ -22,10 +22,12 @@ public class CardService {
         // Definer begge URL'er
         String url1 = "https://api.magicthegathering.io/v1/cards";
         String url2 = "https://api.magicthegathering.io/v1/cards?set=SoM";
+        String url3 = "https://api.magicthegathering.io/v1/cards?set=MBS";
 
         // Hent data fra begge URL'er og kombiner resultaterne
         List<Map<String, Object>> combinedCards = fetchCardsFromUrl(url1);
         combinedCards.addAll(fetchCardsFromUrl(url2));
+        combinedCards.addAll(fetchCardsFromUrl(url3));
 
         // Behandle og gem de kombinerede kortdata
         for (Map<String, Object> cardData : combinedCards) {
