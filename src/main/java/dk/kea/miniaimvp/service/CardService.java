@@ -106,4 +106,26 @@ public class CardService {
         }
         return null; // Eller en standardværdi, hvis ingen af delene
     }
+
+    public List<CardModel> getCardsForRushDeck() {
+        return cardRepository.findAll()
+                .stream()
+                .filter(card -> {
+                    // Her antager vi, at et "rush deck" består af kort med høj "power"
+                    // og måske også specifikke "colors" som fx "Red"
+                    boolean hasHighPower = parsePower(card.getPower()) > 3; // Tilpas tærskelværdi
+                    boolean isAggressiveColor = card.getColors().contains("Red"); // Tilpas farvefilter efter behov
+                    return hasHighPower && isAggressiveColor;
+                })
+                .collect(Collectors.toList());
+    }
+
+    // Hjælpemetode til at parse "power" fra String til int (hvis det er nødvendigt)
+    private int parsePower(String power) {
+        try {
+            return Integer.parseInt(power);
+        } catch (NumberFormatException e) {
+            return 0; // Standardværdi hvis power ikke kan parses
+        }
+    }
 }

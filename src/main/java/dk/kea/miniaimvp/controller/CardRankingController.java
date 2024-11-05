@@ -1,9 +1,16 @@
 package dk.kea.miniaimvp.controller;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.kea.miniaimvp.DTO.MyResponse;
+import dk.kea.miniaimvp.model.CardModel;
 import dk.kea.miniaimvp.service.OpenAiService;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * This class handles fetching a card ranking via the ChatGPT API.
@@ -36,6 +43,22 @@ public class CardRankingController {
      */
     @PostMapping
     public MyResponse getRanking(@RequestBody String cards) {
-        return service.makeRequest(cards, SYSTEM_MESSAGE);
+        // Parse JSON-strengen til en liste af CardModel objekter
+        List<CardModel> cardModels = parseCards(cards);
+
+        // Kald makeRequestWithCards med "rank" som deckType og cardModels som kortdata
+        return service.makeRequestWithCards("rank", cardModels);
     }
+
+    // Hjælpefunktion til at parse JSON-strengen til en liste af CardModel
+    private List<CardModel> parseCards(String cardsJson) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            // Konverter JSON-strengen til en liste af CardModel objekter
+            return Arrays.asList(objectMapper.readValue(cardsJson, CardModel[].class));
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid card data format");
+        }
+    }
+
 }

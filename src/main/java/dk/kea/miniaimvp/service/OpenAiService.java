@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.kea.miniaimvp.DTO.ChatCompletionRequest;
 import dk.kea.miniaimvp.DTO.ChatCompletionResponse;
 import dk.kea.miniaimvp.DTO.MyResponse;
+import dk.kea.miniaimvp.model.CardModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +17,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
+import java.util.List;
 
 @Service
 public class OpenAiService {
@@ -52,9 +54,25 @@ public class OpenAiService {
         this.client = WebClient.create();
     }
 
-    public MyResponse makeRequest(String userPrompt, String systemMessage) {
+    public MyResponse makeRequestWithCards(String deckType, List<CardModel> cards) {
+        StringBuilder userPrompt = new StringBuilder("Byg et effektivt " + deckType + " deck med de følgende kort:\n");
 
-        // Byg ChatCompletionRequest
+        for (CardModel card : cards) {
+            userPrompt.append("- Navn: ").append(card.getName()).append(", ");
+            userPrompt.append("Farver: ").append(card.getColors() != null ? card.getColors().toString() : "N/A").append(", ");
+            userPrompt.append("Mana-kost: ").append(card.getManaCost() != null ? card.getManaCost() : "N/A").append(", ");
+            userPrompt.append("Power: ").append(card.getPower() != null ? card.getPower() : "N/A").append(", ");
+            userPrompt.append("Toughness: ").append(card.getToughness() != null ? card.getToughness() : "N/A").append(", ");
+            userPrompt.append("Effekt: ").append(card.getText() != null ? card.getText() : "N/A").append("\n");
+        }
+
+        userPrompt.append("\nVælg de bedste kort for at skabe et hurtigt, aggressivt deck med høj angrebsstyrke og lav mana-kost.");
+
+        // Log prompten for at se, hvordan den ser ud
+        logger.info("User prompt: " + userPrompt.toString());
+
+        String systemMessage = "Du er en erfaren Magic: The Gathering deck-builder.";
+
         ChatCompletionRequest requestDto = new ChatCompletionRequest();
         requestDto.setModel(MODEL);
         requestDto.setTemperature(TEMPERATURE);
@@ -63,35 +81,34 @@ public class OpenAiService {
         requestDto.setFrequency_penalty(FREQUENCY_PENALTY);
         requestDto.setPresence_penalty(PRESENCE_PENALTY);
         requestDto.getMessages().add(new ChatCompletionRequest.Message("system", systemMessage));
-        requestDto.getMessages().add(new ChatCompletionRequest.Message("user", userPrompt));
+        requestDto.getMessages().add(new ChatCompletionRequest.Message("user", userPrompt.toString()));
 
-        // Send anmodningen til OpenAI API'et
+        // Send request og få respons
         try {
             ChatCompletionResponse response = client.post()
                     .uri(new URI(URL))
                     .header("Authorization", "Bearer " + API_KEY)
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON)
-                    .body(BodyInserters.fromValue(requestDto))  // Bruger requestDto direkte
+                    .body(BodyInserters.fromValue(requestDto))
                     .retrieve()
                     .bodyToMono(ChatCompletionResponse.class)
-                    .block();  // Blokerer for at vente på svaret (imperativ stil)
+                    .block();
 
-            // Ekstraher responsbesked og tokenforbrug
             String responseMsg = response.getChoices().get(0).getMessage().getContent();
             int tokensUsed = response.getUsage().getTotal_tokens();
             logger.info("Tokens used: " + tokensUsed);
 
-            return new MyResponse(responseMsg);  // Returner resultatet som MyResponse
-        }
-        catch (WebClientResponseException e) {
+            return new MyResponse(responseMsg);
+        } catch (WebClientResponseException e) {
             logger.error("Error response status code: " + e.getRawStatusCode());
             logger.error("Error response body: " + e.getResponseBodyAsString());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed request to OpenAI API");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.error("Exception", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred");
         }
     }
+
+
 }
