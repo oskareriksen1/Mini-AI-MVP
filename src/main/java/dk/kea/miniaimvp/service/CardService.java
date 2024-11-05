@@ -19,11 +19,16 @@ public class CardService {
     private RestTemplate restTemplate;
 
     public void fetchAndSaveCards() {
-        String url = "https://api.magicthegathering.io/v1/cards";
-        Map<String, List<Map<String, Object>>> response = restTemplate.getForObject(url, Map.class);
-        List<Map<String, Object>> cards = response.get("cards");
+        // Definer begge URL'er
+        String url1 = "https://api.magicthegathering.io/v1/cards";
+        String url2 = "https://api.magicthegathering.io/v1/cards?set=SoM";
 
-        for (Map<String, Object> cardData : cards) {
+        // Hent data fra begge URL'er og kombiner resultaterne
+        List<Map<String, Object>> combinedCards = fetchCardsFromUrl(url1);
+        combinedCards.addAll(fetchCardsFromUrl(url2));
+
+        // Behandle og gem de kombinerede kortdata
+        for (Map<String, Object> cardData : combinedCards) {
             String cardName = (String) cardData.get("name");
             if (!cardRepository.existsByName(cardName)) {
 
@@ -31,20 +36,15 @@ public class CardService {
                 card.setLayout((String) cardData.get("layout"));
                 card.setName(cardName);
 
-                // Konverter "names" fra liste til streng, hvis nødvendigt
                 card.setNames(convertListToString(cardData.get("names")));
-
                 card.setManaCost((String) cardData.get("manaCost"));
                 card.setCmc(cardData.get("cmc") != null ? ((Number) cardData.get("cmc")).doubleValue() : 0.0);
-
-                // Cast korrekt til List<String>
                 card.setColors((List<String>) cardData.get("colors"));
                 card.setColorIdentity((List<String>) cardData.get("colorIdentity"));
                 card.setSupertypes((List<String>) cardData.get("supertypes"));
                 card.setTypes((List<String>) cardData.get("types"));
                 card.setSubtypes((List<String>) cardData.get("subtypes"));
                 card.setPrintings((List<String>) cardData.get("printings"));
-
                 card.setType((String) cardData.get("type"));
                 card.setRarity((String) cardData.get("rarity"));
                 card.setText((String) cardData.get("text"));
@@ -55,15 +55,10 @@ public class CardService {
                 card.setPower((String) cardData.get("power"));
                 card.setToughness((String) cardData.get("toughness"));
                 card.setLoyalty((String) cardData.get("loyalty"));
-
-                // Brug convertToInt til at undgå typefejl
                 card.setMultiverseid(convertToInt(cardData.get("multiverseid")));
                 card.setHand(convertToInt(cardData.get("hand")));
                 card.setLife(convertToInt(cardData.get("life")));
-
-                // Konverter "variations" fra liste til streng, hvis nødvendigt
                 card.setVariations(convertListToString(cardData.get("variations")));
-
                 card.setImageName((String) cardData.get("imageName"));
                 card.setWatermark((String) cardData.get("watermark"));
                 card.setBorder((String) cardData.get("border"));
@@ -78,6 +73,12 @@ public class CardService {
                 cardRepository.save(card);
             }
         }
+    }
+
+    // Metode til at hente kort fra en specifik URL
+    private List<Map<String, Object>> fetchCardsFromUrl(String url) {
+        Map<String, List<Map<String, Object>>> response = restTemplate.getForObject(url, Map.class);
+        return response.getOrDefault("cards", List.of());
     }
 
     private int convertToInt(Object value) {

@@ -32,7 +32,7 @@ public class CardModel {
 
     private String type;
 
-    @ElementCollection
+        @ElementCollection
     private List<String> supertypes; // Ændret til liste
 
     @ElementCollection
@@ -42,7 +42,9 @@ public class CardModel {
     private List<String> subtypes; // Ændret til liste
 
     private String rarity;
+    @Column(length = 1000)
     private String text;
+    @Column(length = 1000)
     private String originalText;
     private String flavor;
     private String artist;
