@@ -68,6 +68,7 @@ public class CardRankingController {
 
     @PostMapping("/generate")
     public MyResponse generateDeck(@RequestBody DeckRequest deckRequest) {
+        // Byg prompt baseret på de tilgængelige kort og brugerens præferencer
         String prompt = createDeckPrompt(deckRequest);
         return service.makeRequest(prompt, SYSTEM_MESSAGE);
     }
@@ -75,9 +76,16 @@ public class CardRankingController {
     private String createDeckPrompt(DeckRequest deckRequest) {
         String colorList = String.join(", ", deckRequest.getColors());
         String deckType = deckRequest.getDeckType();
-        return "Please create an optimal Magic: The Gathering " + deckType +
-                " using the following colors: " + colorList +
-                ". Select cards that fit the strategy and synergize well.";
-    }
 
+        // Tilføj de tilgængelige kort i prompten, så ChatGPT kan vælge blandt dem
+        StringBuilder promptBuilder = new StringBuilder("Please create an optimal " + deckType + " deck using the following colors: " + colorList + ". You may only choose from the available cards listed below:\n");
+
+        for (CardModel card : deckRequest.getAvailableCards()) {
+            promptBuilder.append("- Name: ").append(card.getName())
+                    .append("\n");
+        }
+
+        promptBuilder.append("\nChoose the best cards for a ").append(deckType).append(" strategy.");
+        return promptBuilder.toString();
+    }
 }

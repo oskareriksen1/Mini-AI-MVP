@@ -1,11 +1,11 @@
 async function loadAllCards() {
     try {
-        // Sørg for, at URL'en peger på den korrekte backend-port
         const response = await fetch("http://localhost:8080/api/cards/all");
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const cards = await response.json();
+        allCards = cards;  // Gemmer alle kort i en variabel
         displayCards(cards);
     } catch (error) {
         console.error("Error fetching all cards:", error);
@@ -77,15 +77,16 @@ window.onclick = function(event) {
     }
 }
 
-// Funktion til at indsamle valgte farver og sende dem til backend
 async function generateDeck() {
     // Hent de valgte farver fra checkboxes
     const selectedColors = Array.from(document.querySelectorAll('.color-option:checked')).map(cb => cb.value);
     const deckType = document.getElementById("deck-type").value;
 
+    // Deck request med specifikke kort fra databasen
     const deckRequest = {
         colors: selectedColors,
-        deckType: deckType
+        deckType: deckType,
+        availableCards: allCards  // Sender hele listen af kort til backend
     };
 
     try {

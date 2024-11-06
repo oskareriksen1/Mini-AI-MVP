@@ -110,8 +110,6 @@ public class OpenAiService {
         }
     }
     public MyResponse makeRequest(String userPrompt, String systemMessage) {
-
-        // Byg ChatCompletionRequest objekt
         ChatCompletionRequest requestDto = new ChatCompletionRequest();
         requestDto.setModel(MODEL);
         requestDto.setTemperature(TEMPERATURE);
@@ -123,7 +121,6 @@ public class OpenAiService {
         requestDto.getMessages().add(new ChatCompletionRequest.Message("user", userPrompt));
 
         try {
-            // Send anmodningen til OpenAI API
             ChatCompletionResponse response = client.post()
                     .uri(new URI(URL))
                     .header("Authorization", "Bearer " + API_KEY)
@@ -132,9 +129,8 @@ public class OpenAiService {
                     .body(BodyInserters.fromValue(requestDto))
                     .retrieve()
                     .bodyToMono(ChatCompletionResponse.class)
-                    .block(); // Bloker for at vente på svar
+                    .block();
 
-            // Ekstrakt svaret fra API’et
             String responseMsg = response.getChoices().get(0).getMessage().getContent();
             return new MyResponse(responseMsg);
         } catch (Exception e) {

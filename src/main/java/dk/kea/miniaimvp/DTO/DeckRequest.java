@@ -1,10 +1,13 @@
 package dk.kea.miniaimvp.DTO;
 
+import dk.kea.miniaimvp.model.CardModel;
+
 import java.util.List;
 
 public class DeckRequest {
     private List<String> colors;
     private String deckType;
+    private List<CardModel> availableCards;
 
     // Getters og Setters
     public List<String> getColors() {
@@ -21,5 +24,11 @@ public class DeckRequest {
 
     public void setDeckType(String deckType) {
         this.deckType = deckType;
+    }
+    public List<CardModel> getAvailableCards() {
+        return availableCards;
+    }
+    public void setAvailableCards(List<CardModel> availableCards) {
+        this.availableCards = availableCards;
     }
 }
