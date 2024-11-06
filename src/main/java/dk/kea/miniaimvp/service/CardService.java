@@ -1,7 +1,6 @@
 package dk.kea.miniaimvp.service;
 import dk.kea.miniaimvp.model.CardModel;
 import dk.kea.miniaimvp.repository.CardRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -12,22 +11,36 @@ import java.util.stream.Collectors;
 @Service
 public class CardService {
 
-    @Autowired
-    private CardRepository cardRepository;
+    private final CardRepository cardRepository;
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
+
+    public CardService(CardRepository cardRepository, RestTemplate restTemplate) {
+        this.cardRepository = cardRepository;
+        this.restTemplate = restTemplate;
+    }
 
     public void fetchAndSaveCards() {
         // Definer begge URL'er
         String url1 = "https://api.magicthegathering.io/v1/cards";
         String url2 = "https://api.magicthegathering.io/v1/cards?set=SoM";
         String url3 = "https://api.magicthegathering.io/v1/cards?set=MBS";
+        String url4 = "https://api.magicthegathering.io/v1/cards?set=NPH";
+        String url5 = "https://api.magicthegathering.io/v1/cards?set=5DN";
+        String url6 = "https://api.magicthegathering.io/v1/cards?set=DST";
+        String url7 = "https://api.magicthegathering.io/v1/cards?set=MRD";
+        String url8 = "https://api.magicthegathering.io/v1/cards?set=ISD";
+
 
         // Hent data fra begge URL'er og kombiner resultaterne
         List<Map<String, Object>> combinedCards = fetchCardsFromUrl(url1);
         combinedCards.addAll(fetchCardsFromUrl(url2));
         combinedCards.addAll(fetchCardsFromUrl(url3));
+        combinedCards.addAll(fetchCardsFromUrl(url4));
+        combinedCards.addAll(fetchCardsFromUrl(url5));
+        combinedCards.addAll(fetchCardsFromUrl(url6));
+        combinedCards.addAll(fetchCardsFromUrl(url7));
+        combinedCards.addAll(fetchCardsFromUrl(url8));
 
         // Behandle og gem de kombinerede kortdata
         for (Map<String, Object> cardData : combinedCards) {

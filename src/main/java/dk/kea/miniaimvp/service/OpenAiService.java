@@ -59,11 +59,11 @@ public class OpenAiService {
 
         for (CardModel card : cards) {
             userPrompt.append("- Navn: ").append(card.getName()).append(", ");
-            userPrompt.append("Farver: ").append(card.getColors() != null ? card.getColors().toString() : "N/A").append(", ");
-            userPrompt.append("Mana-kost: ").append(card.getManaCost() != null ? card.getManaCost() : "N/A").append(", ");
-            userPrompt.append("Power: ").append(card.getPower() != null ? card.getPower() : "N/A").append(", ");
-            userPrompt.append("Toughness: ").append(card.getToughness() != null ? card.getToughness() : "N/A").append(", ");
-            userPrompt.append("Effekt: ").append(card.getText() != null ? card.getText() : "N/A").append("\n");
+//            userPrompt.append("Farver: ").append(card.getColors() != null ? card.getColors().toString() : "N/A").append(", ");
+//            userPrompt.append("Mana-kost: ").append(card.getManaCost() != null ? card.getManaCost() : "N/A").append(", ");
+//            userPrompt.append("Power: ").append(card.getPower() != null ? card.getPower() : "N/A").append(", ");
+//            userPrompt.append("Toughness: ").append(card.getToughness() != null ? card.getToughness() : "N/A").append(", ");
+//            userPrompt.append("Effekt: ").append(card.getText() != null ? card.getText() : "N/A").append("\n");
         }
 
         userPrompt.append("\nVælg de bedste kort for at skabe et hurtigt, aggressivt deck med høj angrebsstyrke og lav mana-kost.");
