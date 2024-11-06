@@ -128,4 +128,34 @@ public class CardService {
             return 0; // Standardværdi hvis power ikke kan parses
         }
     }
+    private static final Map<String, String> colorMap = Map.of(
+            "White", "W",
+            "Blue", "U",
+            "Black", "B",
+            "Red", "R",
+            "Green", "G",
+            "Colorless", ""  // Hvis der findes colorless kort
+    );
+
+    // Henter alle kort og mapper farver til forkortelser
+    public List<CardModel> getAllCardsWithMappedColors() {
+        return cardRepository.findAll().stream()
+                .peek(card -> {
+                    if (card.getColors() != null) {
+                        List<String> mappedColors = card.getColors().stream()
+                                .map(color -> colorMap.getOrDefault(color, color))  // Mapper farve, eller beholder hvis ingen match
+                                .collect(Collectors.toList());
+                        card.setColors(mappedColors);
+                    }
+                })
+                .collect(Collectors.toList());
+    }
+
+    public List<CardModel> filterCards(String mana, String type, String effect) {
+        return getAllCardsWithMappedColors().stream()
+                .filter(card -> mana == null || card.getColors().contains(mana.toUpperCase()))
+                .filter(card -> type == null || (card.getType() != null && card.getType().toLowerCase().contains(type.toLowerCase())))
+                .filter(card -> effect == null || (card.getText() != null && card.getText().toLowerCase().contains(effect.toLowerCase())))
+                .collect(Collectors.toList());
+    }
 }

@@ -10,11 +10,6 @@
     margin-right: 20px;
 }
 
-#cards-container .card {
-    border: 1px solid #ddd;
-    padding: 10px;
-    margin-bottom: 10px;
-}
 
 .card h3 {
     margin: 0;
@@ -23,4 +18,18 @@
 
 .card p {
     margin: 5px 0;
+}
+#cards-container .card {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: flex-start;
+}
+
+.card-image {
+    width: 100px; /* Justér størrelsen efter behov */
+    height: auto;
+    margin-right: 10px;
+    border-radius: 5px;
 }

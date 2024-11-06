@@ -2,44 +2,41 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Filter</title>
+    <title>MTG Kort Filter</title>
     <link rel="stylesheet" href="stylingTilFilter.css">
     <script src="FilterFunktion.js" defer></script>
 </head>
 <body>
 <div id="filters">
-        <label for="mana-filter">Mana:</label>
-        <select id="mana-filter">
-            <option value="">All Mana</option>
-            <option value="white">White</option>
-            <option value="blue">Blue</option>
-            <option value="black">Black</option>
-            <option value="red">Red</option>
-            <option value="green">Green</option>
-            <option value="colorless">Colorless</option>
-        </select>
+    <label for="mana-filter">Mana:</label>
+    <select id="mana-filter">
+        <option value="">All Mana</option>
+        <option value="W">White</option>
+        <option value="U">Blue</option>
+        <option value="B">Black</option>
+        <option value="R">Red</option>
+        <option value="G">Green</option>
+        <option value="C">Colorless</option>
+    </select>
 
-        <label for="type-filter">Type:</label>
-        <select id="type-filter">
-            <option value="">All Types</option>
-            <option value="creature">Creature</option>
-            <option value="artifact">Artifact</option>
-            <option value="enchantment">Enchantment</option>
-            <option value="instant">Instant</option>
-            <option value="sorcery">Sorcery</option>
-            <!-- Tilføj flere typer hvis nødvendigt -->
-        </select>
+    <label for="type-filter">Type:</label>
+    <select id="type-filter">
+        <option value="">All Types</option>
+        <option value="creature">Creature</option>
+        <option value="artifact">Artifact</option>
+        <option value="enchantment">Enchantment</option>
+        <option value="instant">Instant</option>
+        <option value="sorcery">Sorcery</option>
+    </select>
 
-        <label for="effect-filter">Effect:</label>
-        <input type="text" id="effect-filter" placeholder="Enter effect keyword">
-    </div>
+    <label for="effect-filter">Effect:</label>
+    <input type="text" id="effect-filter" placeholder="Enter effect keyword">
+</div>
 
 <button onclick="applyFilters()">Filter</button>
 
 <div id="cards-container">
     <!-- Her vil de filtrerede kort blive vist -->
 </div>
-
-
 </body>
 </html>
