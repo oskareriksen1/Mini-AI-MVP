@@ -114,7 +114,7 @@ public class CardService {
                     // Her antager vi, at et "rush deck" består af kort med høj "power"
                     // og måske også specifikke "colors" som fx "Red"
                     boolean hasHighPower = parsePower(card.getPower()) > 3; // Tilpas tærskelværdi
-                    boolean isAggressiveColor = card.getColors().contains("Red"); // Tilpas farvefilter efter behov
+                    boolean isAggressiveColor = card.getColors().contains("R"); // Tilpas farvefilter efter behov
                     return hasHighPower && isAggressiveColor;
                 })
                 .collect(Collectors.toList());

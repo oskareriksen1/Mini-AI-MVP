@@ -109,6 +109,39 @@ public class OpenAiService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred");
         }
     }
+    public MyResponse makeRequest(String userPrompt, String systemMessage) {
+
+        // Byg ChatCompletionRequest objekt
+        ChatCompletionRequest requestDto = new ChatCompletionRequest();
+        requestDto.setModel(MODEL);
+        requestDto.setTemperature(TEMPERATURE);
+        requestDto.setMax_tokens(MAX_TOKENS);
+        requestDto.setTop_p(TOP_P);
+        requestDto.setFrequency_penalty(FREQUENCY_PENALTY);
+        requestDto.setPresence_penalty(PRESENCE_PENALTY);
+        requestDto.getMessages().add(new ChatCompletionRequest.Message("system", systemMessage));
+        requestDto.getMessages().add(new ChatCompletionRequest.Message("user", userPrompt));
+
+        try {
+            // Send anmodningen til OpenAI API
+            ChatCompletionResponse response = client.post()
+                    .uri(new URI(URL))
+                    .header("Authorization", "Bearer " + API_KEY)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .body(BodyInserters.fromValue(requestDto))
+                    .retrieve()
+                    .bodyToMono(ChatCompletionResponse.class)
+                    .block(); // Bloker for at vente på svar
+
+            // Ekstrakt svaret fra API’et
+            String responseMsg = response.getChoices().get(0).getMessage().getContent();
+            return new MyResponse(responseMsg);
+        } catch (Exception e) {
+            logger.error("Error communicating with OpenAI API", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An error occurred while communicating with OpenAI");
+        }
+    }
 
 
 }

@@ -35,6 +35,29 @@
 
 <button onclick="applyFilters()">Filter</button>
 
+<div id="deck-generator">
+    <label for="color-dropdown">Choose Colors for Deck:</label>
+    <div class="custom-dropdown">
+        <button id="color-dropdown" onclick="toggleDropdown()">Select Colors ▼</button>
+        <div id="color-menu" class="dropdown-content">
+            <label><input type="checkbox" value="W" class="color-option"> White</label>
+            <label><input type="checkbox" value="U" class="color-option"> Blue</label>
+            <label><input type="checkbox" value="B" class="color-option"> Black</label>
+            <label><input type="checkbox" value="R" class="color-option"> Red</label>
+            <label><input type="checkbox" value="G" class="color-option"> Green</label>
+        </div>
+    </div>
+
+    <label for="deck-type">Deck Type:</label>
+    <input type="text" id="deck-type" placeholder="e.g., control deck, rush deck" style="width: 180px;">
+
+    <button onclick="generateDeck()">Generate Deck</button>
+</div>
+
+<div id="deck-result">
+    <!-- Genereret deck vises her -->
+</div>
+
 <div id="cards-container">
     <!-- Her vil de filtrerede kort blive vist -->
 </div>

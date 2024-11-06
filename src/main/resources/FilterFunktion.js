@@ -60,6 +60,57 @@ function displayCards(cards) {
     });
 
 }
+function toggleDropdown() {
+    document.getElementById("color-menu").classList.toggle("show");
+}
 
+// Klik uden for dropdown for at lukke den
+window.onclick = function(event) {
+    if (!event.target.matches('#color-dropdown')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        for (var i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+            }
+        }
+    }
+}
+
+// Funktion til at indsamle valgte farver og sende dem til backend
+async function generateDeck() {
+    // Hent de valgte farver fra checkboxes
+    const selectedColors = Array.from(document.querySelectorAll('.color-option:checked')).map(cb => cb.value);
+    const deckType = document.getElementById("deck-type").value;
+
+    const deckRequest = {
+        colors: selectedColors,
+        deckType: deckType
+    };
+
+    try {
+        const response = await fetch("http://localhost:8080/api/v1/rank/generate", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(deckRequest)
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const deck = await response.json();
+        displayDeck(deck.content); // Brug deck.content for at vise resultatet
+    } catch (error) {
+        console.error("Error generating deck:", error);
+    }
+}
+
+function displayDeck(deckContent) {
+    const deckResult = document.getElementById("deck-result");
+    deckResult.innerHTML = `<p>${deckContent}</p>`;
+}
 // Hent alle kort, når siden indlæses
 window.onload = loadAllCards;
