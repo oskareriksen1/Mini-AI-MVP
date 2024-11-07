@@ -78,6 +78,12 @@ window.onclick = function(event) {
 }
 
 async function generateDeck() {
+
+    const loadingIcon = document.getElementById("loadingIcon");
+    loadingIcon.style.display = "inline-block"; // Vis spinneren
+    document.body.style.cursor = "wait"; // Skift muse-ikon
+
+
     // Hent de valgte farver fra checkboxes
     const selectedColors = Array.from(document.querySelectorAll('.color-option:checked')).map(cb => cb.value);
     const deckType = document.getElementById("deck-type").value;
@@ -106,6 +112,10 @@ async function generateDeck() {
         displayDeck(deck.content); // Brug deck.content for at vise resultatet
     } catch (error) {
         console.error("Error generating deck:", error);
+    } finally {
+        // Skjul spinneren og nulstil muse-ikon
+        loadingIcon.style.display = "none";
+        document.body.style.cursor = "default";
     }
 }
 
