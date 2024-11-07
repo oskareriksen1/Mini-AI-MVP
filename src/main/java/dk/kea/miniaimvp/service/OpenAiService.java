@@ -15,8 +15,10 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.server.ResponseStatusException;
+import reactor.util.retry.Retry;
 
 import java.net.URI;
+import java.time.Duration;
 import java.util.List;
 
 @Service
@@ -129,10 +131,18 @@ public class OpenAiService {
                     .body(BodyInserters.fromValue(requestDto))
                     .retrieve()
                     .bodyToMono(ChatCompletionResponse.class)
+                    .retryWhen(
+                            Retry.backoff(3, Duration.ofSeconds(2))  // Op til 3 forsøg med eksponentiel backoff
+                                    .filter(throwable -> throwable instanceof WebClientResponseException.TooManyRequests)  // Kun retry på 429-fejl
+                                    .doBeforeRetry(retrySignal -> logger.warn("Retrying request to OpenAI API due to 429 Too Many Requests"))
+                    )
                     .block();
 
             String responseMsg = response.getChoices().get(0).getMessage().getContent();
             return new MyResponse(responseMsg);
+        } catch (WebClientResponseException.TooManyRequests e) {
+            logger.error("Reached rate limit with OpenAI API. Try again later.", e);
+            throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "Too many requests to OpenAI API. Please try again later.");
         } catch (Exception e) {
             logger.error("Error communicating with OpenAI API", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An error occurred while communicating with OpenAI");
