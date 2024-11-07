@@ -5,8 +5,8 @@ async function loadAllCards() {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const cards = await response.json();
-        allCards = cards;  // Gemmer alle kort i en variabel
         displayCards(cards);
+        window.allCards = cards; // Gemmer alle kortene globalt, så vi kan søge i dem
     } catch (error) {
         console.error("Error fetching all cards:", error);
     }
@@ -24,7 +24,6 @@ async function applyFilters() {
     if (effectKeyword) queryParams.append("effect", effectKeyword);
 
     try {
-        // Opdater URL'en til at pege på backend-serveren
         const response = await fetch(`http://localhost:8080/api/cards/filter?${queryParams.toString()}`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -50,7 +49,7 @@ function displayCards(cards) {
         const cardElement = document.createElement("div");
         cardElement.classList.add("card");
         cardElement.innerHTML = `
-            <img src="${card.imageUrl}" alt="${card.name}" class="card-image" /> <!-- Billede -->
+            <img src="${card.imageUrl}" alt="${card.name}" class="card-image" />
             <h3>${card.name}</h3>
             <p>Mana: ${card.colors.join(", ")}</p>
             <p>Type: ${card.type}</p>
@@ -58,7 +57,6 @@ function displayCards(cards) {
         `;
         container.appendChild(cardElement);
     });
-
 }
 function toggleDropdown() {
     document.getElementById("color-menu").classList.toggle("show");
@@ -76,6 +74,18 @@ window.onclick = function(event) {
         }
     }
 }
+function searchCardByName() {
+    const searchInput = document.getElementById("search-input").value.toLowerCase();
+    const filteredCards = window.allCards.filter(card => card.name.toLowerCase().includes(searchInput));
+    displayCards(filteredCards);
+}
+document.getElementById("search-input").addEventListener("input", searchCardByName); // Live-søgning
+document.getElementById("search-input").addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+        event.preventDefault(); // Forhindrer standardformulering
+        searchCardByName();
+    }
+});
 
 async function generateDeck() {
 
