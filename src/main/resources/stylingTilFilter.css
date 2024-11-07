@@ -62,7 +62,7 @@
 }
 
 .card-image {
-    width: 150px; /* Justér størrelsen efter behov */
+    width: 100px; /* Justér størrelsen efter behov */
     height: auto;
     margin-right: 10px;
     border-radius: 5px;
@@ -80,38 +80,4 @@
 
 @keyframes spin {
     to { transform: rotate(360deg); }
-}
-#search-bar {
-    display: flex;
-    align-items: center;
-    margin-top: 20px;
-}
-
-#search-input {
-    width: 250px;
-    padding: 8px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    margin-right: 10px;
-}
-
-#search-bar button {
-    background-color: #007bff; /* Samme farve som filter-knappen */
-    color: #fff;
-    border: none;
-    padding: 8px 12px;
-    font-size: 14px;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: background-color 0.2s ease;
-}
-
-#search-bar button:hover {
-    background-color: #0056b3; /* Mørkere blå ved hover */
-}
-
-#search-input:focus {
-    border-color: #007bff;
-    outline: none;
 }
