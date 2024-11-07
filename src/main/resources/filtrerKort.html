@@ -2,65 +2,78 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MTG Kort Filter</title>
-    <link rel="stylesheet" href="/stylingTilFilter.css">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="stylingTilFilter.css">
     <script src="FilterFunktion.js" defer></script>
 </head>
-<body>
-<div id="filters">
-    <label for="mana-filter">Mana:</label>
-    <select id="mana-filter">
-        <option value="">All Mana</option>
-        <option value="W">White</option>
-        <option value="U">Blue</option>
-        <option value="B">Black</option>
-        <option value="R">Red</option>
-        <option value="G">Green</option>
-        <option value="C">Colorless</option>
-    </select>
+<body class="container my-4">
+<div id="filters" class="mb-3">
+    <div class="form-group">
+        <label for="mana-filter">Mana:</label>
+        <select id="mana-filter" class="form-control">
+            <option value="">All Mana</option>
+            <option value="W">White</option>
+            <option value="U">Blue</option>
+            <option value="B">Black</option>
+            <option value="R">Red</option>
+            <option value="G">Green</option>
+            <option value="C">Colorless</option>
+        </select>
+    </div>
 
-    <label for="type-filter">Type:</label>
-    <select id="type-filter">
-        <option value="">All Types</option>
-        <option value="creature">Creature</option>
-        <option value="artifact">Artifact</option>
-        <option value="enchantment">Enchantment</option>
-        <option value="instant">Instant</option>
-        <option value="sorcery">Sorcery</option>
-    </select>
+    <div class="form-group">
+        <label for="type-filter">Type:</label>
+        <select id="type-filter" class="form-control">
+            <option value="">All Types</option>
+            <option value="creature">Creature</option>
+            <option value="artifact">Artifact</option>
+            <option value="enchantment">Enchantment</option>
+            <option value="instant">Instant</option>
+            <option value="sorcery">Sorcery</option>
+        </select>
+    </div>
 
-    <label for="effect-filter">Effect:</label>
-    <input type="text" id="effect-filter" placeholder="Enter effect keyword">
+    <div class="form-group">
+        <label for="effect-filter">Effect:</label>
+        <input type="text" id="effect-filter" class="form-control" placeholder="Enter effect keyword">
+    </div>
 </div>
 
-<button onclick="applyFilters()">Filter</button>
+<button class="btn btn-primary mb-4" type="button" onclick="applyFilters()">Filter</button>
 
-<div id="deck-generator">
+<div id="deck-generator" class="mb-4">
     <label for="color-dropdown">Choose Colors for Deck:</label>
-    <div class="custom-dropdown">
-        <button id="color-dropdown" onclick="toggleDropdown()">Select Colors ▼</button>
-        <div id="color-menu" class="dropdown-content">
-            <label><input type="checkbox" value="W" class="color-option"> White</label>
-            <label><input type="checkbox" value="U" class="color-option"> Blue</label>
-            <label><input type="checkbox" value="B" class="color-option"> Black</label>
-            <label><input type="checkbox" value="R" class="color-option"> Red</label>
-            <label><input type="checkbox" value="G" class="color-option"> Green</label>
+    <div class="custom-dropdown mb-2">
+        <button id="color-dropdown" class="btn btn-secondary dropdown-toggle" onclick="toggleDropdown()" aria-expanded="false">Select Colors ▼</button>
+        <div id="color-menu" class="dropdown-menu">
+            <label class="dropdown-item"><input type="checkbox" value="W" class="color-option"> White</label>
+            <label class="dropdown-item"><input type="checkbox" value="U" class="color-option"> Blue</label>
+            <label class="dropdown-item"><input type="checkbox" value="B" class="color-option"> Black</label>
+            <label class="dropdown-item"><input type="checkbox" value="R" class="color-option"> Red</label>
+            <label class="dropdown-item"><input type="checkbox" value="G" class="color-option"> Green</label>
         </div>
     </div>
 
-    <label for="deck-type">Deck Type:</label>
-    <input type="text" id="deck-type" placeholder="e.g., control deck, rush deck" style="width: 180px;">
+    <div class="form-group">
+        <label for="deck-type">Deck Type:</label>
+        <input type="text" id="deck-type" class="form-control" placeholder="e.g., control deck, rush deck">
+    </div>
 
-    <button onclick="generateDeck()">Generate Deck</button>
-    <div id="loadingIcon"></div>
+    <button class="btn btn-success" type="button" onclick="generateDeck()">Generate Deck</button>
 </div>
 
-<div id="deck-result">
+<div id="deck-result" class="border p-3 mb-4">
     <!-- Genereret deck vises her -->
 </div>
 
-<div id="cards-container">
+<div id="cards-container" class="border p-3">
     <!-- Her vil de filtrerede kort blive vist -->
 </div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
